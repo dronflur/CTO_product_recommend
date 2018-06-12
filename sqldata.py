@@ -37,14 +37,14 @@ sql_top_10_products = """select Level0, concat("[", concat_ws(',', collect_list(
                                 (select *, case when Discount_Rate > 0 then 1 - Discount_Rate else 1 end as Visit
                                 from
                                     (select *, cast(((InitialPrice-DiscountPrice)/InitialPrice) as float) as Discount_Rate
-                                    from tbSales
+                                    from tbSales_bestseller
                                     where InitialPrice > 0 and StockAvailble >= 1))
                             group by Level0, Pid
                             order by Visit desc) a
                         join (select Pid, max(InitialPrice) as InitialPrice, max(DiscountPrice) as DiscountPrice
                             from
                                 (select *
-                                from tbSales
+                                from tbSales_bestseller
                                 where StockAvailble >= 1
                                 order by OrderId desc)
                             group by Pid) b 
@@ -72,14 +72,14 @@ sql_top_7_cat_all = """ select Level0, AVG_Discount, ROW_NUMBER() OVER (order by
                                 (select *, case when Discount_Rate > 0 then 1 - Discount_Rate else 1 end as Visit
                                 from
                                     (select *, cast(((InitialPrice-DiscountPrice)/InitialPrice) as float) as Discount_Rate
-                                    from tbSales
+                                    from tbSales_bestseller
                                     where InitialPrice > 0 and StockAvailble >= 1))
                             group by Level0, Pid
                             order by Visit desc) a
                         join (select Pid, max(InitialPrice) as InitialPrice, max(DiscountPrice) as DiscountPrice
                             from
                                 (select *
-                                from tbSales
+                                from tbSales_bestseller
                                 where StockAvailble >= 1
                                 order by OrderId desc)
                             group by Pid) b 
@@ -112,14 +112,14 @@ sql_top_7_cat_gender = """select *
                                     (select *, case when Discount_Rate > 0 then 1 - Discount_Rate else 1 end as Visit
                                     from
                                         (select *, cast(((InitialPrice-DiscountPrice)/InitialPrice) as float) as Discount_Rate
-                                        from tbSales
+                                        from tbSales_bestseller
                                         where InitialPrice > 0 and StockAvailble >= 1 and Gender != 'not specify'))
                                 group by Gender, Level0, Pid
                                 order by Visit desc) a
                             join (select Pid, max(InitialPrice) as InitialPrice, max(DiscountPrice) as DiscountPrice
                                 from
                                     (select *
-                                    from tbSales
+                                    from tbSales_bestseller
                                     where StockAvailble >= 1
                                     order by OrderId desc)
                                 group by Pid) b 
@@ -157,14 +157,14 @@ sql_top_7_cat_age = """select *
                                                         when AgeYearsIntRound between 36 and 50 then 'Senior Worker'
                                                         when AgeYearsIntRound between 51 and 70 then 'Elder'
                                                     end as AgeRange
-                                        from tbSales
+                                        from tbSales_bestseller
                                         where InitialPrice > 0 and StockAvailble >= 1 and (AgeYearsIntRound between 15 and 70)))
                                 group by AgeRange, Level0, Pid
                                 order by Visit desc) a
                             join (select Pid, max(InitialPrice) as InitialPrice, max(DiscountPrice) as DiscountPrice
                                 from
                                     (select *
-                                    from tbSales
+                                    from tbSales_bestseller
                                     where StockAvailble >= 1
                                     order by OrderId desc)
                                 group by Pid) b 
@@ -202,14 +202,14 @@ sql_top_7_cat_gender_age = """select *
                                                         when AgeYearsIntRound between 36 and 50 then 'Senior Worker'
                                                         when AgeYearsIntRound between 51 and 70 then 'Elder'
                                                     end as AgeRange
-                                        from tbSales
+                                        from tbSales_bestseller
                                         where InitialPrice > 0 and StockAvailble >= 1 and (Gender != 'not specify') and (AgeYearsIntRound between 15 and 70)))
                                 group by Gender, AgeRange, Level0, Pid
                                 order by Visit desc) a
                             join (select Pid, max(InitialPrice) as InitialPrice, max(DiscountPrice) as DiscountPrice
                                 from
                                     (select *
-                                    from tbSales
+                                    from tbSales_bestseller
                                     where StockAvailble >= 1
                                     order by OrderId desc)
                                 group by Pid) b 
