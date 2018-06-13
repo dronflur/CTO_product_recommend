@@ -1,6 +1,7 @@
 from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
 from pyspark.ml.feature import StringIndexer
 from sparkHandler import saveToTempTable
+import time
 
 # Latent Factors to be made
 RANK = 100
@@ -33,11 +34,24 @@ def runModel(Sql, TableName, Rank = RANK, No_iterations = NO_ITERATIONS, Alpha =
     # ALS Implicit Model
     alsModel.model = ALS.trainImplicit(ratings_NonVariety, Rank, No_iterations, Alpha)
     print("done -- model")
-    alsModel.users = indexed_product.select('UserId', 'UserIdNew').dropDuplicates().toPandas()
+    lambda_users = lambda r: {r.UserIdNew: r.UserId}
+    alsModel.users = convertToDict(indexed_product, lambda_users)
+    #alsModel.users = indexed_product.select('UserId', 'UserIdNew').dropDuplicates().toPandas()
     print("done -- users")
-    alsModel.products = indexed_product.select('Pid', 'PidNew').dropDuplicates().toPandas()
+    lambda_prods = lambda r: {r.PidNew: r.Pid}
+    alsModel.products = convertToDict(indexed_product, lambda_prods)
+    #alsModel.products = indexed_product.select('Pid', 'PidNew').dropDuplicates().toPandas()
     print("done -- products")
     return alsModel
+
+def convertToDict(data, lambda_var):
+    start = time.time()
+    temp_data = data.rdd.map(lambda_var)
+    dict_data = {}
+    [dict_data.update(i) for i in temp_data.take(temp_data.count())]
+    stop = time.time()
+    print("convertToDict: "+str(stop-start))
+    return dict_data
 
 def indexedUser(df):
     # Index User

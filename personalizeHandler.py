@@ -4,6 +4,15 @@ def personalize(alsModel, SavePath):
     col_user = []
     col_recommend = []
 
+    for key, value in alsModel.users.items():
+        user_id = value
+        user_idNew = key
+        dfRec = alsModel.model.recommendProducts(int(user_idNew), 10)
+        lst_rec = [alsModel.products[i[1]] for i in dfRec]
+        
+        col_user.append(user_id)
+        col_recommend.append(lst_rec)
+    '''
     for idx, user in alsModel.users.iterrows():
     
         user_id = user['UserId']
@@ -19,6 +28,7 @@ def personalize(alsModel, SavePath):
 
         col_user.append(user_id)
         col_recommend.append(lst_rec)
+    '''
         
     dfProductRec = pd.DataFrame()
     dfProductRec['UserId'] = col_user
