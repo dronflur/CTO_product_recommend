@@ -23,7 +23,7 @@ def main():
     start = time.time()
     CombineAndSave(feq_online_var, feq_offline_var, non_variety, variety)
     stop = time.time()
-    print("Final complete --  " + str(stop - start)))
+    print("Final complete --  " + str(stop - start))
 
 def prepareData():
     # Product Price & Discount
