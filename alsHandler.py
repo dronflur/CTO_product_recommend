@@ -21,19 +21,29 @@ def runModel(Sql, TableName, Rank = RANK, No_iterations = NO_ITERATIONS, Alpha =
     dfNonVariety_ALS = saveToTempTable(Sql = Sql, TableName = TableName)
     print(dfNonVariety_ALS.count())
     
+    start = time.time()
     indexed_user = indexedUser(dfNonVariety_ALS)
-    print("done -- indexed_user")
+    stop = time.time()
+    print("done -- indexed_user " + str(stop-start))
+
+    start = time.time()
     indexed_product = indexedProduct(indexed_user)
-    print("done -- indexed_product")
+    stop = time.time()
+    print("done -- indexed_product " + str(stop-start))
+
+    start = time.time()
     ratings_NonVariety = indexed_product.rdd.map(lambda r: Rating(r.UserIdNew, r.PidNew, r.Visit))
-    print("done -- rating")
-    print(ratings_NonVariety.count())
+    stop = time.time()
+    print("done -- rating " + str(stop-start))
+
 
     alsModel = ALSModel()
     print("done -- create instance")
     # ALS Implicit Model
+    start = time.time()
     alsModel.model = ALS.trainImplicit(ratings_NonVariety, Rank, No_iterations, Alpha)
-    print("done -- model")
+    stop = time.time()
+    print("done -- model " + str(stop-start))
     lambda_users = lambda r: {r.UserIdNew: r.UserId}
     alsModel.users = convertToDict(indexed_product, lambda_users)
     #alsModel.users = indexed_product.select('UserId', 'UserIdNew').dropDuplicates().toPandas()

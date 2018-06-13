@@ -6,6 +6,7 @@ from configHandler import *
 from npHandler import saveNp
 from sqldata import *
 import numpy as np
+import time
 
 AWS_KEY, AWS_SECRET = getAwsKey()
 CDS_REC_S3 = getFileStorePath()
@@ -18,7 +19,11 @@ def main():
     bestSeller_var, feq_online_var, feq_offline_var = prepareData()
     bestSeller(bestSeller_var)
     non_variety, variety = ALSFunction()
+    
+    start = time.time()
     CombineAndSave(feq_online_var, feq_offline_var, non_variety, variety)
+    stop = time.time()
+    print("Final complete --  " + str(stop - start)))
 
 def prepareData():
     # Product Price & Discount
@@ -67,10 +72,15 @@ def ALSFunction():
     print("done -- var")
     non_var_model = runModel(sql_non_var_als, 'tbNonVariety_ALS')
     print("done -- non_var")
+    start = time.time()
     non_variety = personalize(non_var_model, SavePath = CDS_REC_S3_FINAL+'Recommend_NonVariety.csv')
-    print("done -- personalize -- non_var")
+    stop = time.time()
+    print("done -- personalize -- non_var " + str(stop - start))
+
+    start = time.time()
     variety = personalize(var_model, SavePath = CDS_REC_S3_FINAL+'Recommend_Variety.csv')
-    print("done -- personalize -- var")
+    stop = time.time()
+    print("done -- personalize -- var " + str(stop - start))
     return non_variety, variety
 
 def CombineAndSave(feq_online, feq_offline, non_variety, variety):
