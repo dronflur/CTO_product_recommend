@@ -70,6 +70,11 @@ def ALSFunction():
     print("##ALS##")
     var_model = runModel(sql_var_als, 'tbVariety_ALS')
     print("done -- var")
+    start = time.time()
+    variety = personalize(var_model, SavePath = CDS_REC_S3_FINAL+'Recommend_Variety.csv')
+    stop = time.time()
+    print("done -- personalize -- var " + str(stop - start))
+    
     non_var_model = runModel(sql_non_var_als, 'tbNonVariety_ALS')
     print("done -- non_var")
     start = time.time()
@@ -77,10 +82,6 @@ def ALSFunction():
     stop = time.time()
     print("done -- personalize -- non_var " + str(stop - start))
 
-    start = time.time()
-    variety = personalize(var_model, SavePath = CDS_REC_S3_FINAL+'Recommend_Variety.csv')
-    stop = time.time()
-    print("done -- personalize -- var " + str(stop - start))
     return non_variety, variety
 
 def CombineAndSave(feq_online, feq_offline, non_variety, variety):
