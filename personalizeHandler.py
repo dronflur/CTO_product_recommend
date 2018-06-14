@@ -5,6 +5,7 @@ def personalize(alsModel, SavePath):
     col_user = []
     col_recommend = []
     sum = 0
+    i = 0
     for key, value in alsModel.users.items():
         user_id = value
         user_idNew = key
@@ -13,9 +14,12 @@ def personalize(alsModel, SavePath):
         stop = time.time()
         sum = sum + (stop - start)
         lst_rec = [alsModel.products[i[1]] for i in dfRec]
-        
+        print(str(i) + ": user_idNew " + str(user_idNew) + " list: " + str(lst_rec))
+
         col_user.append(user_id)
         col_recommend.append(lst_rec)
+        print("---- appended ----")
+        i = i + 1
     '''
     for idx, user in alsModel.users.iterrows():
     
