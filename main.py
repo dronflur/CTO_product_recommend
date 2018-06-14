@@ -35,13 +35,13 @@ def prepareData():
     # Sales 2017
     saveToTempTable(Path = CDS_REC_S3+'CDS_Raw2.csv', TableName = 'tbSales_2017')
     # Sales(Best Seller) -- Test
-    #saveToTempTable(Path = CDS_REC_S3+'CDS_Sales_201805_Test.csv', TableName = 'tbSales')
+    saveToTempTable(Path = CDS_REC_S3+'CDS_Sales_201805_Test.csv', TableName = 'tbSales')
     # Sales(Best Seller)
     saveToTempTable(Path = CDS_REC_S3+'CDS_Sales_201805.csv', TableName = 'tbSales_bestseller')
     # Sales clean
-    saveToTempTable(Sql = sql_sales_clean, TableName = 'tbSales_2017')
+    #saveToTempTable(Sql = sql_sales_clean, TableName = 'tbSales_2017')
     # Merge Sales 2017&2018
-    saveToTempTable(Sql = sql_merge_sales_17_18, TableName = 'tbSales')
+    #saveToTempTable(Sql = sql_merge_sales_17_18, TableName = 'tbSales')
     # Sales 2018 (Offline)
     saveToTempTable(Path = CDS_REC_S3+'CDSSales_2018_Offline.csv', TableName = 'tbCDSSales_2018_Offline')
     # User Master 2018
@@ -74,7 +74,7 @@ def ALSFunction():
     variety = personalize(var_model, SavePath = CDS_REC_S3_FINAL+'Recommend_Variety.csv')
     stop = time.time()
     print("done -- personalize -- var " + str(stop - start))
-    
+
     non_var_model = runModel(sql_non_var_als, 'tbNonVariety_ALS')
     print("done -- non_var")
     start = time.time()
