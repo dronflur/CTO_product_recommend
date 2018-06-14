@@ -40,11 +40,11 @@ def runModel(Sql, TableName, Rank = RANK, No_iterations = NO_ITERATIONS, Alpha =
     print("done -- create instance")
 
     lambda_users = lambda r: {r.UserIdNew: r.UserId}
-    alsModel.users = convertToDict(indexed_product, lambda_users)
+    alsModel.users = convertToDict(indexed_product.select('UserId', 'UserIdNew').dropDuplicates(), lambda_users)
     #alsModel.users = indexed_product.select('UserId', 'UserIdNew').dropDuplicates().toPandas()
     print("done -- users")
     lambda_prods = lambda r: {r.PidNew: r.Pid}
-    alsModel.products = convertToDict(indexed_product, lambda_prods)
+    alsModel.products = convertToDict(indexed_product.select('Pid', 'PidNew').dropDuplicates(), lambda_prods)
     #alsModel.products = indexed_product.select('Pid', 'PidNew').dropDuplicates().toPandas()
     print("done -- products")
 
