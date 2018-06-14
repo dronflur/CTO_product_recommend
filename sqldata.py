@@ -305,3 +305,17 @@ sql_combine_rec = """select distinct c.*, d.Recommend
             from tbFrequency_Online a
             left join tbFrequency_Offline b on a.UserId = b.UserId) c
         left join tbRecommend d on c.UserId = d.UserId"""
+
+sql_personalize = """select UserId, concat("[", concat_ws(',', collect_list(Pid)), "]") as Recommend
+        from
+            (select distinct a.*, b.UserId, c.Pid
+            from
+                (select *
+                from
+                    (select User, Product, Rating, ROW_NUMBER() over (Partition BY User ORDER BY Rating DESC) AS Rank
+                    from tbRec)
+                where Rank <= 10) a
+            left join tbData b on a.User = b.UserIdNew
+            left join tbData c on a.Product = c.PidNew
+            order by a.User, a.Rank)
+        group by UserId"""

@@ -10,7 +10,7 @@ CSV_FORMAT = "csv"
 SPARK_CSV_FORMAT = "com.databricks.spark.csv"
 
 
-def saveToTempTable(Path = None, Sql = None, ObjectToDF = None, TableName = None, SavePath = None):
+def saveToTempTable(Path = None, Sql = None, ObjectToDF = None, DFObject = None, TableName = None, SavePath = None):
     df = None
 
     # Query
@@ -20,13 +20,15 @@ def saveToTempTable(Path = None, Sql = None, ObjectToDF = None, TableName = None
         df = spark.sql(Sql)
     elif ObjectToDF is not None:
         df = spark.createDataFrame(ObjectToDF)
+    elif DFObject is not None:
+        df = DFObject
     else:
         #TODO throw invalid query parameter exception
         df = None
 
     # Save
     if TableName:
-        df.registerTempTable(TableName)
+        df.createOrReplaceTempView(TableName)
     elif SavePath:
         df.coalesce(1).write.format(SPARK_CSV_FORMAT).option("header", "true").save(SavePath)
 

@@ -87,9 +87,9 @@ def ALSFunction():
 def CombineAndSave(feq_online, feq_offline, non_variety, variety):
     # Recommendation
     print("start -- CombineAndSave")
-    dfRecommend = non_variety.append(variety)    
+    dfRecommend = non_variety.union(variety)    
     print("done -- dfRecommend")
-    saveToTempTable(ObjectToDF=dfRecommend, TableName='tbRecommend')
+    saveToTempTable(DFObject=dfRecommend, TableName='tbRecommend')
     #spark.createDataFrame(dfRecommend).registerTempTable("tbRecommend")
     print("done -- spark dfRecommend")
     feq_online.registerTempTable("tbFrequency_Online")

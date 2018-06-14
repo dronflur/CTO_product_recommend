@@ -12,8 +12,7 @@ APLHA = 0.01
 
 class ALSModel:
     model = None
-    users = None
-    products = None
+    joined_rdd = None
 
 def runModel(Sql, TableName, Rank = RANK, No_iterations = NO_ITERATIONS, Alpha = APLHA):
     ### ALS ###
@@ -38,15 +37,16 @@ def runModel(Sql, TableName, Rank = RANK, No_iterations = NO_ITERATIONS, Alpha =
 
     alsModel = ALSModel()
     print("done -- create instance")
+    
+    start = time.time()
+    alsModel.joined_rdd = indexed_product.select('UserIdNew').dropDuplicates().crossJoin(indexed_product.select('PidNew').dropDuplicates()).rdd.map(lambda x: (x[0], x[1]))
+    stop = time.time()
+    print("done -- cross join " + str(stop-start))
 
-    lambda_users = lambda r: {r.UserIdNew: r.UserId}
-    alsModel.users = convertToDict(indexed_product.select('UserId', 'UserIdNew').dropDuplicates(), lambda_users)
-    #alsModel.users = indexed_product.select('UserId', 'UserIdNew').dropDuplicates().toPandas()
-    print("done -- users")
-    lambda_prods = lambda r: {r.PidNew: r.Pid}
-    alsModel.products = convertToDict(indexed_product.select('Pid', 'PidNew').dropDuplicates(), lambda_prods)
-    #alsModel.products = indexed_product.select('Pid', 'PidNew').dropDuplicates().toPandas()
-    print("done -- products")
+    start = time.time()
+    saveToTempTable(DFObject = indexed_product, TableName='tbData')
+    stop = time.time()
+    print("done -- dump df_ALS to temp table " + str(stop-start))
 
     # ALS Implicit Model
     start = time.time()
@@ -54,6 +54,7 @@ def runModel(Sql, TableName, Rank = RANK, No_iterations = NO_ITERATIONS, Alpha =
     stop = time.time()
     print("done -- model " + str(stop-start))
     return alsModel
+
 
 def convertToDict(data, lambda_var):
     start = time.time()
