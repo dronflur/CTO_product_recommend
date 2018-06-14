@@ -36,14 +36,9 @@ def runModel(Sql, TableName, Rank = RANK, No_iterations = NO_ITERATIONS, Alpha =
     stop = time.time()
     print("done -- rating " + str(stop-start))
 
-
     alsModel = ALSModel()
     print("done -- create instance")
-    # ALS Implicit Model
-    start = time.time()
-    alsModel.model = ALS.trainImplicit(ratings_NonVariety, Rank, No_iterations, Alpha)
-    stop = time.time()
-    print("done -- model " + str(stop-start))
+
     lambda_users = lambda r: {r.UserIdNew: r.UserId}
     alsModel.users = convertToDict(indexed_product, lambda_users)
     #alsModel.users = indexed_product.select('UserId', 'UserIdNew').dropDuplicates().toPandas()
@@ -52,6 +47,12 @@ def runModel(Sql, TableName, Rank = RANK, No_iterations = NO_ITERATIONS, Alpha =
     alsModel.products = convertToDict(indexed_product, lambda_prods)
     #alsModel.products = indexed_product.select('Pid', 'PidNew').dropDuplicates().toPandas()
     print("done -- products")
+
+    # ALS Implicit Model
+    start = time.time()
+    alsModel.model = ALS.trainImplicit(ratings_NonVariety, Rank, No_iterations, Alpha)
+    stop = time.time()
+    print("done -- model " + str(stop-start))
     return alsModel
 
 def convertToDict(data, lambda_var):
