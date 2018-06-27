@@ -37,24 +37,24 @@ def prepareData():
     # Sales 2017
     saveToTempTable(Path = CDS_REC_S3+'CDS_Raw2.csv', TableName = 'tbSales_2017')
     '''
-    saveToTempTable(Path = CDL_CDS_S3+'tborder/*', IsParquet=True, TableName = 'tbOrder')
+    saveToTempTable(Path = CDL_CDS_S3+'cds_dbcdsdata/tborder/*', IsParquet=True, TableName = 'tbOrder')
 
-    saveToTempTable(Path = CDL_CDS_S3+'tborderdetail/*', IsParquet=True, TableName = 'tbOrderDetail')
+    saveToTempTable(Path = CDL_CDS_S3+'cds_dbcdsdata/tborderdetail/*', IsParquet=True, TableName = 'tbOrderDetail')
 
-    saveToTempTable(Path = CDL_CDS_S3+'tbUser/*', IsParquet=True, TableName = 'tbUser')
+    saveToTempTable(Path = CDL_CDS_S3+'cds_dbcdsdata/tbUser/*', IsParquet=True, TableName = 'tbUser')
 
-    saveToTempTable(Path = CDL_CDS_S3+'tbdepartment/*', IsParquet=True, TableName = 'tbDepartment')
+    saveToTempTable(Path = CDL_CDS_S3+'cds_dbcdscontent/tbdepartment/*', IsParquet=True, TableName = 'tbDepartment')
 
-    saveToTempTable(Path = CDL_CDS_S3+'tbproduct/*', IsParquet=True, TableName = 'tbProduct')
+    saveToTempTable(Path = CDL_CDS_S3+'cds_dbcdscontent/tbproduct/*', IsParquet=True, TableName = 'tbProduct')
 
-    saveToTempTable(Path = CDL_CDS_S3+'tbproductgroup/*', IsParquet=True, TableName = 'tbProductGroup')
+    saveToTempTable(Path = CDL_CDS_S3+'cds_dbcdscontent/tbproductgroup/*', IsParquet=True, TableName = 'tbProductGroup')
 
     # Sales(Best Seller) -- Test
     #saveToTempTable(Path = CDS_REC_S3+'CDS_Sales_201805_Test.csv', TableName = 'tbSales')
 
     # Sales(Best Seller)
 #    saveToTempTable(Path = CDS_REC_S3+'CDS_Sales_201805.csv', TableName = 'tbSales_bestseller')
-    saveToTempTable(SQL = sql_best_seller, TableName = 'tbSales_bestseller')
+    saveToTempTable(Sql = sql_best_seller, TableName = 'tbSales_bestseller')
     # Sales clean
     saveToTempTable(Sql = sql_sales_clean, TableName = 'tbSales_2017')
     # Merge Sales 2017&2018
