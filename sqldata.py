@@ -329,7 +329,7 @@ sql_best_seller = """
                 when t4.gender = 2 then 'female'
                 else 'not specify'
             end as Gender,
-            case when t4.birthdate is null then 0 else floor(datediff(to_date(from_unixtime(unix_timestamp())), to_date(t4.birthdate)) / 365.25) end as Age,
+            case when t4.birthdate is null then 0 else floor(datediff(to_date(from_unixtime(unix_timestamp())), to_date(t4.birthdate)) / 365.25) end as AgeYearsIntRound,
             t2.Pid, t2.Quantity, t3.StockAvar as StockAvailble, t3.FullPrice as InitialPrice, t2.UnitPriceIncVat as DiscountPrice, t11.*
         from tbOrder t1
         left join tbOrderDetail t2 on t1.OrderId = t2.OrderId
