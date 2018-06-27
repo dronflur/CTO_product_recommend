@@ -325,9 +325,9 @@ sql_best_seller = """
     from
         (select t1.OrderId, t1.OrderDate, t1.UserId,
             case
-                when t4.gender = 1 then ‘male’
-                when t4.gender = 2 then ‘female’
-                else ‘not specify’
+                when t4.gender = 1 then 'male'
+                when t4.gender = 2 then 'female'
+                else 'not specify'
             end as Gender,
             case when t4.birthdate is null then 0 else floor(datediff(to_date(from_unixtime(unix_timestamp())), to_date(t4.birthdate)) / 365.25) end as Age,
             t2.Pid, t2.Quantity, t3.StockAvar as StockAvailble, t3.FullPrice as InitialPrice, t2.UnitPriceIncVat as DiscountPrice, t11.*
@@ -337,9 +337,9 @@ sql_best_seller = """
         left join tbUser t4 on t1.UserEmail = t4.email
         left join
             (select  pidnew,
-                case when level0nameen is null then ‘OTHER’ else level0nameen end as level0,
-                case when level1nameen is null then ‘OTHER’ else level1nameen end as level1,
-                case when level2nameen is null then ‘OTHER’ else level2nameen end as level2
+                case when level0nameen is null then 'OTHER' else level0nameen end as level0,
+                case when level1nameen is null then 'OTHER' else level1nameen end as level1,
+                case when level2nameen is null then 'OTHER' else level2nameen end as level2
             from
                 (select t1.pidnew, max(level0nameen) as level0nameen, max(level1nameen) as level1nameen, max(level2nameen) as level2nameen
                 from tbProduct t1
@@ -367,7 +367,7 @@ sql_best_seller = """
                         from tbDepartment l0
                         where parentid is null) t3
                 on t2.departmentid = t3.level2id or t2.departmentid = t3.level1id or t2.departmentid = t3.level0id
-                where pidnew <> ‘’ or pidnew is not null
+                where pidnew <> '' or pidnew is not null
                 group by t1.pidnew)) t11
         on t2.pidnew = t11.pidnew)
     where datediff(to_date(from_unixtime(unix_timestamp())), to_date(OrderDate)) <= 90 and DiscountPrice > 0 and Quantity > 0 and StockAvailble >= 3
