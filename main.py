@@ -56,11 +56,11 @@ def prepareData():
 #    saveToTempTable(Path = CDS_REC_S3+'CDS_Sales_201805.csv', TableName = 'tbSales_bestseller')
     saveToTempTable(Sql = sql_best_seller, TableName = 'tbSales_bestseller')
     # Sales clean
-    saveToTempTable(Sql = sql_sales_clean, TableName = 'tbSales_2017')
+    #saveToTempTable(Sql = sql_sales_clean, TableName = 'tbSales_2017')
     # Merge Sales 2017&2018
-    saveToTempTable(Sql = sql_merge_sales_17_18, TableName = 'tbSales')
+    #saveToTempTable(Sql = sql_merge_sales_17_18, TableName = 'tbSales')
     # Sales 2018 (Offline)
-    saveToTempTable(Path = CDS_REC_S3+'CDSSales_2018_Offline.csv', TableName = 'tbCDSSales_2018_Offline')
+    #saveToTempTable(Path = CDS_REC_S3+'CDSSales_2018_Offline.csv', TableName = 'tbCDSSales_2018_Offline')
     # User Master 2018
     #saveToTempTable(Path = CDS_REC_S3+'CDSUser_2018_Update.csv', TableName = 'tbUser_2018')
     # Top10 Product
@@ -76,10 +76,11 @@ def prepareData():
     # Top5 Categories Demo
     bestSeller = saveToTempTable(Sql = sql_top_5_cat_demo)
     # Frequency Online
-    feq_online = saveToTempTable(Sql = sql_feq_online)
+    #feq_online = saveToTempTable(Sql = sql_feq_online)
     # Frequency Offline
-    feq_offline = saveToTempTable(Sql = sql_feq_offline)
-
+    #feq_offline = saveToTempTable(Sql = sql_feq_offline)
+    feq_online = None
+    feq_offline = None
     return bestSeller, feq_online, feq_offline
 
 def ALSFunction():
