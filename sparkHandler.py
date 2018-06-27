@@ -10,12 +10,12 @@ CSV_FORMAT = "csv"
 SPARK_CSV_FORMAT = "com.databricks.spark.csv"
 
 
-def saveToTempTable(Path = None, Sql = None, ObjectToDF = None, DFObject = None, TableName = None, SavePath = None):
+def saveToTempTable(Path = None, IsParquet = False, Sql = None, ObjectToDF = None, DFObject = None, TableName = None, SavePath = None):
     df = None
 
     # Query
     if Path:
-        df = loadFile(Path)
+        df = loadFile(Path, IsParquet = IsParquet)
     elif Sql:
         df = spark.sql(Sql)
     elif ObjectToDF is not None:
@@ -34,5 +34,7 @@ def saveToTempTable(Path = None, Sql = None, ObjectToDF = None, DFObject = None,
 
     return df
     
-def loadFile(Path, FileFormat = CSV_FORMAT):
+def loadFile(Path, FileFormat = CSV_FORMAT, IsParquet = False):
+    if IsParquet:
+        return spark.read.parquet(Path)
     return spark.read.format(FileFormat).option("header", "true").load(Path)
