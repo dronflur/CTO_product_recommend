@@ -337,9 +337,9 @@ sql_best_seller = """
         left join tbUser t4 on t1.UserEmail = t4.email
         left join
             (select  pidnew,
-                case when level0nameen is null then 'OTHER' else level0nameen end as level0,
-                case when level1nameen is null then 'OTHER' else level1nameen end as level1,
-                case when level2nameen is null then 'OTHER' else level2nameen end as level2
+                case when level0nameen is null then 'OTHER' else level0nameen end as level0nameen,
+                case when level1nameen is null then 'OTHER' else level1nameen end as level1nameen,
+                case when level2nameen is null then 'OTHER' else level2nameen end as level2nameen
             from
                 (select t1.pidnew, max(level0nameen) as level0nameen, max(level1nameen) as level1nameen, max(level2nameen) as level2nameen
                 from tbProduct t1
