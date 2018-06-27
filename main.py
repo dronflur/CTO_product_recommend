@@ -12,20 +12,22 @@ AWS_KEY, AWS_SECRET = getAwsKey()
 CDS_REC_S3 = getFileStorePath()
 CDS_REC_S3_FINAL = getModelSavePath()
 CDS_REC_S3_FINAL_BACKUP = getModelBackupPath()
+CDL_CDS_S3 = getFileCDSStorePath()
 
 s3fsHandler = S3fsHandler(AWS_KEY, AWS_SECRET)
 
 def main():
     bestSeller_var, feq_online_var, feq_offline_var = prepareData()
     bestSeller(bestSeller_var)
-    non_variety, variety = ALSFunction()
+    #non_variety, variety = ALSFunction()
     
     start = time.time()
-    CombineAndSave(feq_online_var, feq_offline_var, non_variety, variety)
+    #CombineAndSave(feq_online_var, feq_offline_var, non_variety, variety)
     stop = time.time()
     print("Final complete --  " + str(stop - start))
 
 def prepareData():
+    '''
     # Product Price & Discount
     saveToTempTable(Path = CDS_REC_S3+'CDS_Price.csv', TableName = 'tbProduct_Price')
     # Master Product
@@ -34,10 +36,25 @@ def prepareData():
     saveToTempTable(Path = CDS_REC_S3+'CDS_Raw3_2018.csv', TableName = 'tbSales_2018')
     # Sales 2017
     saveToTempTable(Path = CDS_REC_S3+'CDS_Raw2.csv', TableName = 'tbSales_2017')
+    '''
+    saveToTempTable(Path = CDL_CDS_S3+'tborder/*', IsParquet=True, TableName = 'tbOrder')
+
+    saveToTempTable(Path = CDL_CDS_S3+'tborderdetail/*', IsParquet=True, TableName = 'tbOrderDetail')
+
+    saveToTempTable(Path = CDL_CDS_S3+'tbUser/*', IsParquet=True, TableName = 'tbUser')
+
+    saveToTempTable(Path = CDL_CDS_S3+'tbdepartment/*', IsParquet=True, TableName = 'tbDepartment')
+
+    saveToTempTable(Path = CDL_CDS_S3+'tbproduct/*', IsParquet=True, TableName = 'tbProduct')
+
+    saveToTempTable(Path = CDL_CDS_S3+'tbproductgroup/*', IsParquet=True, TableName = 'tbProductGroup')
+
     # Sales(Best Seller) -- Test
     #saveToTempTable(Path = CDS_REC_S3+'CDS_Sales_201805_Test.csv', TableName = 'tbSales')
+
     # Sales(Best Seller)
-    saveToTempTable(Path = CDS_REC_S3+'CDS_Sales_201805.csv', TableName = 'tbSales_bestseller')
+#    saveToTempTable(Path = CDS_REC_S3+'CDS_Sales_201805.csv', TableName = 'tbSales_bestseller')
+    saveToTempTable(SQL = sql_best_seller, TableName = 'tbSales_bestseller')
     # Sales clean
     saveToTempTable(Sql = sql_sales_clean, TableName = 'tbSales_2017')
     # Merge Sales 2017&2018
@@ -45,7 +62,7 @@ def prepareData():
     # Sales 2018 (Offline)
     saveToTempTable(Path = CDS_REC_S3+'CDSSales_2018_Offline.csv', TableName = 'tbCDSSales_2018_Offline')
     # User Master 2018
-    saveToTempTable(Path = CDS_REC_S3+'CDSUser_2018_Update.csv', TableName = 'tbUser_2018')
+    #saveToTempTable(Path = CDS_REC_S3+'CDSUser_2018_Update.csv', TableName = 'tbUser_2018')
     # Top10 Product
     saveToTempTable(Sql = sql_top_10_products, TableName = 'tbTop10Product')
     # Top7 All Categories

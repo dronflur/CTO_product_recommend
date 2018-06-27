@@ -9,6 +9,9 @@ def getAwsKey():
 def getFileStorePath():
     return config['CDS_REC_S3']
 
+def getFileCDSStorePath():
+    return config['CDL_CDS_S3']
+
 def getModelSavePath():
     return config['CDS_REC_S3_FINAL']
 

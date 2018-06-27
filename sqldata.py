@@ -319,3 +319,56 @@ sql_personalize = """select UserId, concat("[", concat_ws(',', collect_list(Pid)
             left join tbData c on a.Product = c.PidNew
             order by a.User, a.Rank)
         group by UserId"""
+
+sql_best_seller = """
+    select *
+    from
+        (select t1.OrderId, t1.OrderDate, t1.UserId,
+            case
+                when t4.gender = 1 then ‘male’
+                when t4.gender = 2 then ‘female’
+                else ‘not specify’
+            end as Gender,
+            case when t4.birthdate is null then 0 else floor(datediff(to_date(from_unixtime(unix_timestamp())), to_date(t4.birthdate)) / 365.25) end as Age,
+            t2.Pid, t2.Quantity, t3.StockAvar as StockAvailble, t3.FullPrice as InitialPrice, t2.UnitPriceIncVat as DiscountPrice, t11.*
+        from tbOrder t1
+        left join tbOrderDetail t2 on t1.OrderId = t2.OrderId
+        left join tbProduct t3 on t2.Pid = t3.Pid
+        left join tbUser t4 on t1.UserEmail = t4.email
+        left join
+            (select  pidnew,
+                case when level0nameen is null then ‘OTHER’ else level0nameen end as level0,
+                case when level1nameen is null then ‘OTHER’ else level1nameen end as level1,
+                case when level2nameen is null then ‘OTHER’ else level2nameen end as level2
+            from
+                (select t1.pidnew, max(level0nameen) as level0nameen, max(level1nameen) as level1nameen, max(level2nameen) as level2nameen
+                from tbProduct t1
+                left join tbProductGroup t2 on t1.productgroupid = t2.productgroupid
+                left join
+                    (select *
+                    from
+                        (select l0.departmentid as level0id,
+                            l0.displaynameen as level0nameen,
+                            l1.displaynameen as level1nameen,
+                            l1.departmentid as level1id,
+                            l2.displaynameen as level2nameen,
+                            l2.departmentid as level2id
+                        from tbDepartment l0
+                        left join tbDepartment l1 on l0.departmentid = l1.parentid
+                        left join tbDepartment l2 on l1.departmentid = l2.parentid
+                        where l0.parentid is null) t
+                        union
+                        select 0 as level0id,
+                            displayname as level0nameen,
+                            displayname as level1nameen,
+                            0 as level1id,
+                            displayname as level2nameen,
+                            0 as level1id
+                        from tbDepartment l0
+                        where parentid is null) t3
+                on t2.departmentid = t3.level2id or t2.departmentid = t3.level1id or t2.departmentid = t3.level0id
+                where pidnew <> ‘’ or pidnew is not null
+                group by t1.pidnew)) t11
+        on t2.pidnew = t11.pidnew)
+    where datediff(to_date(from_unixtime(unix_timestamp())), to_date(OrderDate)) <= 90 and DiscountPrice > 0 and Quantity > 0 and StockAvailble >= 3
+"""
