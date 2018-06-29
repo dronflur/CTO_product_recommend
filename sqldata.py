@@ -370,5 +370,5 @@ sql_best_seller = """
                 where pidnew <> '' or pidnew is not null
                 group by t1.pidnew)) t11
         on t2.pidnew = t11.pidnew)
-    where datediff(to_date(from_unixtime(unix_timestamp())), to_date(OrderDate)) <= 90 and DiscountPrice > 0 and Quantity > 0 and StockAvailble >= 3
+    where datediff(to_date(from_unixtime(unix_timestamp())), to_date(OrderDate)) <= 50 and DiscountPrice > 0 and Quantity > 0 and StockAvailble >= 3
 """
