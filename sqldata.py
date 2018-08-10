@@ -384,7 +384,7 @@ sql_query_click1 = """SELECT fullVisitorId, SKU, count(SKU) as Click
                             hits.eventInfo.eventAction as Event,
                             hits.eventInfo.eventLabel as EventLabel,
                             hits.product.productSKU as SKU
-                    FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-08-01'), TIMESTAMP('2018-08-05')))
+                    FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-01-01'), TIMESTAMP('2018-04-30')))
                   WHERE Event = 'Product Click')
                 GROUP BY fullVisitorId, SKU"""
                 
@@ -399,7 +399,7 @@ sql_query_click2 = """SELECT fullVisitorId, SKU, count(SKU) as Click
                             hits.eventInfo.eventAction as Event,
                             hits.eventInfo.eventLabel as EventLabel,
                             hits.product.productSKU as SKU
-                    FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-08-06'), TIMESTAMP(CURRENT_DATE())))
+                    FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-05-01'), TIMESTAMP(CURRENT_DATE())))
                   WHERE Event = 'Product Click')
                 GROUP BY fullVisitorId, SKU"""
                 
@@ -412,7 +412,7 @@ sql_query_id = """SELECT fullVisitorId, TransactionId
                       hits.eventInfo.eventAction as Event,
                       hits.eventInfo.eventLabel as EventLabel,
                       hits.product.productSKU as SKU
-              FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-08-01'), TIMESTAMP(CURRENT_DATE())))
+              FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-01-01'), TIMESTAMP(CURRENT_DATE())))
             WHERE TransactionId is not null
             GROUP BY fullVisitorId, TransactionId"""
 
@@ -422,7 +422,7 @@ sql_order_detail = """select *
           from
             (select UserId, OrderId
             from tbOrder
-            where TransactionDate >= '2018-08-01') a
+            where TransactionDate >= '2018-01-01') a
           join tbOrderDetail b on a.OrderId = b.OrderId)"""
 
 sql_click_behavior = """select UserId, 
