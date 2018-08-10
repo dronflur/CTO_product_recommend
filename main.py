@@ -7,12 +7,14 @@ from npHandler import saveNp
 from sqldata import *
 import numpy as np
 import time
+import pandas as pd
 
 AWS_KEY, AWS_SECRET = getAwsKey()
 CDS_REC_S3 = getFileStorePath()
 CDS_REC_S3_FINAL = getModelSavePath()
 CDS_REC_S3_FINAL_BACKUP = getModelBackupPath()
 CDL_CDS_S3 = getFileCDSStorePath()
+GA_KEY = 's3://cdl.cto.dev/jirawat/gap-central-group-c73c5b2b981f.json'
 
 s3fsHandler = S3fsHandler(AWS_KEY, AWS_SECRET)
 
@@ -24,6 +26,7 @@ def main():
     start = time.time()
     #CombineAndSave(feq_online_var, feq_offline_var, non_variety, variety)
     stop = time.time()
+    clickBehavior()
     print("Final complete --  " + str(stop - start))
 
 def prepareData():
@@ -124,6 +127,23 @@ def CombineAndSave(feq_online, feq_offline, non_variety, variety):
 def bestSeller(bestSeller):
     filename = 'Top5Cate_Demo.npy'
     s3fsHandler.putFileWithBackup(filename, bestSeller.toPandas())
+
+def clickBehavior():
+    pdClick1 = pd.read_gbq(sql_query_click1, private_key=GA_KEY)
+    pdClick2 = pd.read_gbq(sql_query_click2, private_key=GA_KEY)
+    pdClick = pdClick1.append(pdClick2)
+    pdId = pd.read_gbq(sql_query_id, private_key=GA_KEY)
+    saveToTempTable(DFObject=pdId, TableName='tbIDOrder')
+    saveToTempTable(DFObject=pdClick, TableName='tbIDClick')
+    saveToTempTable(Path = CDL_CDS_S3+'cds_dbcdsdata/tborderdetail/*', IsParquet=True, TableName = 'tbOrderDetail')
+    saveToTempTable(Path = CDL_CDS_S3+'cds_dbcdsdata/tborder/*', IsParquet=True, TableName = 'tbOrder')
+    saveToTempTable(Sql = sql_order_detail, TableName = 'tbUserOrder')
+
+    # Crearte Click Behavior
+    dfClick = saveToTempTable(Sql = sql_click_behavior)
+    filename = 'User_Click.npy'
+    s3fsHandler.putFileWithBackup(filename, dfClick.toPandas())
+
 
 if __name__ == "__main__": 
     main()

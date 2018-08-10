@@ -372,3 +372,93 @@ sql_best_seller = """
         on t2.pidnew = t11.pidnew)
     where datediff(to_date(from_unixtime(unix_timestamp())), to_date(OrderDate)) <= 50 and DiscountPrice > 0 and Quantity > 0 and StockAvailble >= 3
 """
+
+sql_query_click1 = """SELECT fullVisitorId, SKU, count(SKU) as Click
+                FROM
+                  (SELECT *
+                  FROM
+                    (SELECT Date,
+                            fullVisitorId,
+                            visitNumber,
+                            hits.transaction.transactionId as TransactionId,
+                            hits.eventInfo.eventAction as Event,
+                            hits.eventInfo.eventLabel as EventLabel,
+                            hits.product.productSKU as SKU
+                    FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-08-01'), TIMESTAMP('2018-08-05')))
+                  WHERE Event = 'Product Click')
+                GROUP BY fullVisitorId, SKU"""
+                
+sql_query_click2 = """SELECT fullVisitorId, SKU, count(SKU) as Click
+                FROM
+                  (SELECT *
+                  FROM
+                    (SELECT Date,
+                            fullVisitorId,
+                            visitNumber,
+                            hits.transaction.transactionId as TransactionId,
+                            hits.eventInfo.eventAction as Event,
+                            hits.eventInfo.eventLabel as EventLabel,
+                            hits.product.productSKU as SKU
+                    FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-08-06'), TIMESTAMP(CURRENT_DATE())))
+                  WHERE Event = 'Product Click')
+                GROUP BY fullVisitorId, SKU"""
+                
+sql_query_id = """SELECT fullVisitorId, TransactionId
+            FROM
+              (SELECT Date,
+                      fullVisitorId,
+                      visitNumber,
+                      hits.transaction.transactionId as TransactionId,
+                      hits.eventInfo.eventAction as Event,
+                      hits.eventInfo.eventLabel as EventLabel,
+                      hits.product.productSKU as SKU
+              FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-08-01'), TIMESTAMP(CURRENT_DATE())))
+            WHERE TransactionId is not null
+            GROUP BY fullVisitorId, TransactionId"""
+
+sql_order_detail = """select *
+        from
+          (select distinct a.*, b.Pid, b.TransactionDate
+          from
+            (select UserId, OrderId
+            from tbOrder
+            where TransactionDate >= '2018-08-01') a
+          join tbOrderDetail b on a.OrderId = b.OrderId)"""
+
+sql_click_behavior = """select UserId, 
+                concat("[", concat_ws(',',collect_list(case when Rank between 1 and 10 then SKU end)), "]") as Top10,
+                concat("[", concat_ws(',',collect_list(case when Rank between 11 and 20 then SKU end)), "]") as Top11_20
+        from
+            (select UserId, concat("'", SKU, "'") as SKU, ROW_NUMBER() over (Partition BY UserId ORDER BY Score DESC) AS Rank
+            from
+                (select UserId, SKU, Score_Click*Score_Purchase as Score
+                from
+                    (select  UserId, SKU, Score_Click, Recency,
+                            case 
+                                when Recency is null then 2
+                                when Recency >= 91 then 1.8
+                                when Recency between 31 and 90 then 1.6
+                                when Recency between 16 and 30 then 1
+                                when Recency between 1 and 15 then 0.8
+                            end as Score_Purchase
+                    from
+                        (select distinct x.*, y.Recency
+                        from
+                            (select UserId, SKU as SKU, sum(Click) as Score_Click
+                            from
+                                (select c.UserId, d.SKU, d.Click
+                                from
+                                    (select distinct a.UserId, b.FullVisitorId as GAId
+                                    from tbUserOrder a
+                                    join tbIDOrder b
+                                    on a.OrderId = b.TransactionId) c
+                                join tbIdClick d on c.GAId = d.FullVisitorId)
+                            group by UserId, SKU) x
+                        left join 
+                            (select UserId, SKU, datediff(current_date, Date) as Recency
+                            from
+                                (select UserId, Pid as SKU, max(TransactionDate) as Date
+                                from tbUserOrder
+                                group by UserId, Pid)) y
+                        on x.UserId = y.UserId and x.SKU = y.SKU))))
+        group by UserId"""
