@@ -471,7 +471,7 @@ sql_click_behavior = """select UserId,
                                 when Recency >= 91 then 1.8
                                 when Recency between 31 and 90 then 1.6
                                 when Recency between 16 and 30 then 1
-                                when Recency between 1 and 15 then 0.8
+                                when Recency between 1 and 15 then 0.5
                             end as Score_Purchase
                     from
                         (select distinct x.*, y.Recency
