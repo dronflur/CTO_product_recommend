@@ -14,7 +14,7 @@ CDS_REC_S3 = getFileStorePath()
 CDS_REC_S3_FINAL = getModelSavePath()
 CDS_REC_S3_FINAL_BACKUP = getModelBackupPath()
 CDL_CDS_S3 = getFileCDSStorePath()
-GA_KEY = 's3://cdl.cto.dev/jirawat/gap-central-group-c73c5b2b981f.json'
+GA_KEY = 'gap-central-group-c73c5b2b981f.json'
 
 s3fsHandler = S3fsHandler(AWS_KEY, AWS_SECRET)
 
