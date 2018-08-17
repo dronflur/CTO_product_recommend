@@ -373,9 +373,9 @@ sql_best_seller = """
     where datediff(to_date(from_unixtime(unix_timestamp())), to_date(OrderDate)) <= 50 and DiscountPrice > 0 and Quantity > 0 and StockAvailble >= 3
 """
 
-sql_query_click1 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click_Score
+sql_query_click1 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click
                     FROM
-                    (SELECT fullVisitorId, SKU, Click,
+                    (SELECT fullVisitorId, SKU,
                             case
                                 when Date_Diff between 1 and 7 then FLOAT(Click) * 2
                                 when Date_Diff between 8 and 15 then FLOAT(Click) * 1.8
@@ -404,9 +404,9 @@ sql_query_click1 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click_Score
                     GROUP BY fullVisitorId, SKU
                     """
                 
-sql_query_click2 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click_Score
+sql_query_click2 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click
                     FROM
-                    (SELECT fullVisitorId, SKU, Click,
+                    (SELECT fullVisitorId, SKU,
                             case
                                 when Date_Diff between 1 and 7 then FLOAT(Click) * 2
                                 when Date_Diff between 8 and 15 then FLOAT(Click) * 1.8
