@@ -377,9 +377,9 @@ sql_query_click1 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click
                     FROM
                     (SELECT fullVisitorId, SKU,
                             case
-                                when Date_Diff between 1 and 7 then FLOAT(Click) * 2
-                                when Date_Diff between 8 and 15 then FLOAT(Click) * 1.8
-                                when Date_Diff between 16 and 30 then FLOAT(Click) * 1.4
+                                when Date_Diff between 1 and 7 then FLOAT(Click) * 2.0
+                                when Date_Diff between 8 and 15 then FLOAT(Click) * 1.5
+                                when Date_Diff between 16 and 30 then FLOAT(Click) * 1.0
                                 when Date_Diff between 31 and 90 then FLOAT(Click) * 0.5
                             else FLOAT(Click) * 0.2 end as Click_Score
                     FROM
@@ -398,7 +398,7 @@ sql_query_click1 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click
                                     hits.eventInfo.eventLabel as EventLabel,
                                     hits.product.productSKU as SKU
                             FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-01-01'), TIMESTAMP('2018-04-30')))
-                            WHERE Event = 'Product Click'
+                            WHERE Event = 'Product Detail'
                             GROUP BY Date, Time, visitNumber, fullVisitorId, SKU)
                         GROUP BY Date, fullVisitorId, SKU)))
                     GROUP BY fullVisitorId, SKU
@@ -408,9 +408,9 @@ sql_query_click2 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click
                     FROM
                     (SELECT fullVisitorId, SKU,
                             case
-                                when Date_Diff between 1 and 7 then FLOAT(Click) * 2
-                                when Date_Diff between 8 and 15 then FLOAT(Click) * 1.8
-                                when Date_Diff between 16 and 30 then FLOAT(Click) * 1.4
+                                when Date_Diff between 1 and 7 then FLOAT(Click) * 2.0
+                                when Date_Diff between 8 and 15 then FLOAT(Click) * 1.5
+                                when Date_Diff between 16 and 30 then FLOAT(Click) * 1.0
                                 when Date_Diff between 31 and 90 then FLOAT(Click) * 0.5
                             else FLOAT(Click) * 0.2 end as Click_Score
                     FROM
@@ -429,7 +429,7 @@ sql_query_click2 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click
                                     hits.eventInfo.eventLabel as EventLabel,
                                     hits.product.productSKU as SKU
                             FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-05-01'), TIMESTAMP(CURRENT_DATE())))
-                            WHERE Event = 'Product Click'
+                            WHERE Event = 'Product Detail'
                             GROUP BY Date, Time, visitNumber, fullVisitorId, SKU)
                         GROUP BY Date, fullVisitorId, SKU)))
                     GROUP BY fullVisitorId, SKU
