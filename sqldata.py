@@ -397,7 +397,7 @@ sql_query_click1 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click
                                     hits.eventInfo.eventAction as Event,
                                     hits.eventInfo.eventLabel as EventLabel,
                                     hits.product.productSKU as SKU
-                            FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-01-01'), TIMESTAMP('2018-04-30')))
+                            FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-01-01'), TIMESTAMP('2018-03-31')))
                             WHERE Event = 'Product Detail'
                             GROUP BY Date, Time, visitNumber, fullVisitorId, SKU)
                         GROUP BY Date, fullVisitorId, SKU)))
@@ -428,7 +428,38 @@ sql_query_click2 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click
                                     hits.eventInfo.eventAction as Event,
                                     hits.eventInfo.eventLabel as EventLabel,
                                     hits.product.productSKU as SKU
-                            FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-05-01'), TIMESTAMP(CURRENT_DATE())))
+                            FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-04-01'), TIMESTAMP('2018-06-30')))
+                            WHERE Event = 'Product Detail'
+                            GROUP BY Date, Time, visitNumber, fullVisitorId, SKU)
+                        GROUP BY Date, fullVisitorId, SKU)))
+                    GROUP BY fullVisitorId, SKU
+                    """
+
+sql_query_click3 = """SELECT fullVisitorId, SKU, sum(Click_Score) as Click
+                    FROM
+                    (SELECT fullVisitorId, SKU,
+                            case
+                                when Date_Diff between 1 and 7 then FLOAT(Click) * 2.0
+                                when Date_Diff between 8 and 15 then FLOAT(Click) * 1.5
+                                when Date_Diff between 16 and 30 then FLOAT(Click) * 1.0
+                                when Date_Diff between 31 and 90 then FLOAT(Click) * 0.5
+                            else FLOAT(Click) * 0.2 end as Click_Score
+                    FROM
+                        (SELECT *, datediff(CURRENT_DATE(), Date) as Date_Diff
+                        FROM  
+                        (SELECT Date, fullVisitorId, SKU, count(SKU) as Click
+                        FROM
+                            (SELECT Date, Time, visitNumber, fullVisitorId, SKU
+                            FROM
+                            (SELECT Date,
+                                    visitStartTime as Time,
+                                    fullVisitorId,
+                                    visitNumber,
+                                    hits.transaction.transactionId as TransactionId,
+                                    hits.eventInfo.eventAction as Event,
+                                    hits.eventInfo.eventLabel as EventLabel,
+                                    hits.product.productSKU as SKU
+                            FROM TABLE_DATE_RANGE([gap-central-group:38110106.ga_sessions_], TIMESTAMP('2018-07-01'), TIMESTAMP(CURRENT_DATE())))
                             WHERE Event = 'Product Detail'
                             GROUP BY Date, Time, visitNumber, fullVisitorId, SKU)
                         GROUP BY Date, fullVisitorId, SKU)))

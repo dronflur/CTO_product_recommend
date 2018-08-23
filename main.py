@@ -131,7 +131,8 @@ def bestSeller(bestSeller):
 def clickBehavior():
     pdClick1 = pd.read_gbq(sql_query_click1, private_key=GA_KEY)
     pdClick2 = pd.read_gbq(sql_query_click2, private_key=GA_KEY)
-    pdClick = pdClick1.append(pdClick2)
+    pdClick3 = pd.read_gbq(sql_query_click3, private_key=GA_KEY)
+    pdClick = pdClick1.append([pdClick2, pdClick3])
     pdId = pd.read_gbq(sql_query_id, private_key=GA_KEY)
     saveToTempTable(ObjectToDF=pdId, TableName='tbIDOrder')
     saveToTempTable(ObjectToDF=pdClick, TableName='tbIDClick')
